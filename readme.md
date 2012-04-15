@@ -1,0 +1,1 @@
+A WebHDFS module for Node.js

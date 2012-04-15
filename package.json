@@ -1,0 +1,39 @@
+{
+    "name": "node-webhdfs",
+    "description": "A WebHDFS module for Node.js",
+    "version": "0.0.1",
+    "keywords": ["hdfs", "http"],
+    "maintainers": ["Ryan Cole <ryan@rycole.com> (http://rycole.com)"],
+    "contributors": ["Ryan Cole <ryan@rycole.com> (http://rycole.com)"],
+    "bugs": {
+        "name": "mailto:ryan@rycole.com"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://www.opensource.org/licenses/MIT"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://ryancole@github.com/ryancole/node-webhdfs.git"
+        }
+    ],
+    "dependencies": {},
+    "devDependencies": {},
+    "optionalDependencies": {},
+    "engines": {
+        "node": "*"
+    },
+    "author": "Ryan Cole <ryan@rycole.com> (http://rycole.com)",
+    "homepage": "https://github.com/ryancole/node-webhdfs",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/ryancole/node-webhdfs.git"
+    },
+    "main": "lib/webhdfs.js",
+    "scripts": {
+        "test": "mocha --reporter spec test/*"
+    }
+}
