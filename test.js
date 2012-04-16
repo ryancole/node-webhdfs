@@ -4,7 +4,7 @@ var should = require('should');
 
 describe('WebHDFSClient', function () {
     
-    var client = new (require('..')).WebHDFSClient({ user: 'ryan' });
+    var client = new (require('./webhdfs')).WebHDFSClient({ user: 'ryan' });
     
     describe('#mkdirs', function () {
         
