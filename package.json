@@ -1,5 +1,5 @@
 {
-    "name": "webhdfs.js",
+    "name": "webhdfs",
     "description": "A WebHDFS module for Node.js.",
     "version": "0.0.1",
     "keywords": ["hdfs", "webhdfs", "http"],
