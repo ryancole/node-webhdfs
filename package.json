@@ -28,6 +28,6 @@
     },
     "main": "webhdfs.js",
     "scripts": {
-        "test": "mocha --reporter spec test.js"
+        "test": "mocha --reporter spec --timeout 10000 test.js"
     }
 }
