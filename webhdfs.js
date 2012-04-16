@@ -187,6 +187,37 @@ WebHDFSClient.prototype.open = function (path, callback) {
 };
 
 
+// ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#RENAME
+WebHDFSClient.prototype.rename = function (path, destination, callback) {
+    
+    // format request args
+    var args = {
+        
+        json: true,
+        uri: this.base_url + path,
+        qs: {
+            op: 'rename',
+            destination: destination,
+            'user.name': this.options.user
+        }
+        
+    };
+    
+    // send http request
+    request.put(args, function (err, res, body) {
+        
+        // exception handling
+        if ('RemoteException' in body)
+            return callback(new Error(body.RemoteException.message));
+        
+        // execute callback
+        return callback(null, body.boolean);
+        
+    });
+    
+};
+
+
 // ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#MKDIRS
 WebHDFSClient.prototype.mkdirs = function (path, callback) {
     
@@ -215,6 +246,64 @@ WebHDFSClient.prototype.mkdirs = function (path, callback) {
 };
 
 
+// ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#APPEND
+WebHDFSClient.prototype.append = function (path, data, callback) {
+    
+    // format request args
+    var args = {
+        
+        json: true,
+        followRedirect: false,
+        uri: this.base_url + path,
+        qs: {
+            op: 'append',
+            'user.name': this.options.user
+        }
+        
+    };
+    
+    // send http request
+    request.post(args, function (err, response, body) {
+        
+        // check for expected redirect
+        if (response.statusCode == 307) {
+            
+            // format request args
+            args = {
+                
+                body: data,
+                uri: response.headers.location
+                
+            };
+            
+            // send http request
+            request.post(args, function (err, response, body) {
+                
+                // check for expected response
+                if (response.statusCode == 200) {
+                    
+                    return callback(null, true);
+                    
+                } else {
+                    
+                    return callback(new Error('expected http 200 ok'));
+                    
+                }
+                
+            });
+            
+        } else {
+            
+            return callback(new Error('expected redirect'));
+            
+        }
+        
+    }.bind(this));
+    
+};
+
+
+// ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#CREATE
 WebHDFSClient.prototype.create = function (path, data, callback) {
     
     // generate query string
@@ -236,7 +325,6 @@ WebHDFSClient.prototype.create = function (path, data, callback) {
             
             // generate query string
             args = {
-                json: true,
                 body: data,
                 uri: response.headers.location
             };

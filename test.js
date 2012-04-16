@@ -48,10 +48,48 @@ describe('WebHDFSClient', function () {
         
         it('should return the path to the new file', function (done) {
             
-            client.create('/test/foo.txt', JSON.stringify({ bar: 'baz' }), function (err, path) {
+            client.create('/test/foo.txt', '{"foo":"bar",', function (err, path) {
                 
                 should.not.exist(err);
                 should.exist(path);
+                
+                return done();
+                
+            });
+            
+        });
+        
+    });
+    
+    describe('#rename()', function () {
+        
+        it('should return `true` if the file was renamed', function (done) {
+            
+            client.rename('/test/foo.txt', '/test/bar.txt', function (err, success) {
+                
+                should.not.exist(err);
+                should.exist(success);
+                
+                success.should.be.true;
+                
+                return done();
+                
+            });
+            
+        });
+        
+    });
+    
+    describe('#append()', function () {
+        
+        it('should return `true` if the data was appended', function (done) {
+            
+            client.append('/test/bar.txt', '"bar": "baz"}', function (err, success) {
+                
+                should.not.exist(err);
+                should.exist(success);
+                
+                success.should.be.true;
                 
                 return done();
                 
@@ -84,12 +122,12 @@ describe('WebHDFSClient', function () {
         
         it('should return a file checksum', function (done) {
             
-            client.getFileChecksum('/test/foo.txt', function (err, checksum) {
+            client.getFileChecksum('/test/bar.txt', function (err, checksum) {
                 
                 should.not.exist(err);
                 should.exist(checksum);
                 
-                checksum.should.have.property('bytes', '000002000000000000000000ecd9f26f32af06e6c4158c2a70e0f12800000000');
+                checksum.should.have.property('bytes', '000002000000000000000000dbdf72650428467285b0d32f1b12e8d500000000');
                 
                 return done();
                 
@@ -103,7 +141,7 @@ describe('WebHDFSClient', function () {
         
         it('should return the files content', function (done) {
             
-            client.open('/test/foo.txt', function (err, data) {
+            client.open('/test/bar.txt', function (err, data) {
                 
                 should.not.exist(err);
                 should.exist(data);
