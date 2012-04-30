@@ -156,7 +156,8 @@ WebHDFSClient.prototype.getHomeDirectory = function (callback) {
         json: true,
         uri: this.base_url,
         qs: {
-            op: 'gethomedirectory'
+            op: 'gethomedirectory',
+            'user.name': this.options.user
         }
     };
     
