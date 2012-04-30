@@ -239,7 +239,7 @@ WebHDFSClient.prototype.mkdirs = function (path, callback) {
             return callback(new Error(body.RemoteException.message));
         
         // execute callback
-        return callback(null, body.boolean)
+        return callback(null, body.boolean);
         
     });
     
