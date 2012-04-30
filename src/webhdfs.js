@@ -152,17 +152,23 @@ WebHDFSClient.prototype.getFileChecksum = function (path, callback) {
 WebHDFSClient.prototype.getHomeDirectory = function (callback) {
     
     // format request args
-    var args = { uri: this.base_url, qs: { op: 'gethomedirectory' } }
+    var args = {
+        json: true,
+        uri: this.base_url,
+        qs: {
+            op: 'gethomedirectory'
+        }
+    };
     
     // send http request
     request.get(args, function (error, response, body) {
         
         // execute callback
-        return callback(null, body.Path)
+        return callback(null, body.Path);
         
-    })
+    });
     
-}
+};
 
 
 // ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#OPEN
