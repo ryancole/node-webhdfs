@@ -55,7 +55,7 @@ WebHDFSClient.prototype.del = function (path, options, callback) {
 WebHDFSClient.prototype.listStatus = function (path, callback) {
     
     // format request args
-    var args = { uri: this.base_url + path, qs: { op: 'liststatus' } }
+    var args = { json:true, uri: this.base_url + path, qs: { op: 'liststatus' } }
     
     // send http request
     request.get(args, function (error, response, body) {
