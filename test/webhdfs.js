@@ -48,7 +48,7 @@ describe('WebHDFSClient', function () {
         
         it('should return the path to the new file', function (done) {
             
-            client.create('/test/foo.txt', '{"foo":"bar",', function (err, path) {
+            client.create('/test/foo.txt', '{"foo":"bar"}', function (err, path) {
                 
                 should.not.exist(err);
                 should.exist(path);
@@ -66,25 +66,6 @@ describe('WebHDFSClient', function () {
         it('should return `true` if the file was renamed', function (done) {
             
             client.rename('/test/foo.txt', '/test/bar.txt', function (err, success) {
-                
-                should.not.exist(err);
-                should.exist(success);
-                
-                success.should.be.true;
-                
-                return done();
-                
-            });
-            
-        });
-        
-    });
-    
-    describe('#append()', function () {
-        
-        it('should return `true` if the data was appended', function (done) {
-            
-            client.append('/test/bar.txt', '"bar": "baz"}', function (err, success) {
                 
                 should.not.exist(err);
                 should.exist(success);
@@ -127,7 +108,7 @@ describe('WebHDFSClient', function () {
                 should.not.exist(err);
                 should.exist(checksum);
                 
-                checksum.should.have.property('bytes', '000002000000000000000000dbdf72650428467285b0d32f1b12e8d500000000');
+                checksum.should.have.property('algorithm', 'MD5-of-0MD5-of-512CRC32');
                 
                 return done();
                 
@@ -146,7 +127,7 @@ describe('WebHDFSClient', function () {
                 should.not.exist(err);
                 should.exist(data);
                 
-                JSON.parse(data).should.have.property('bar', 'baz');
+                JSON.parse(data).should.have.property('foo', 'bar');
                 
                 return done();
                 

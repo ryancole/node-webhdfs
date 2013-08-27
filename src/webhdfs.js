@@ -293,7 +293,7 @@ WebHDFSClient.prototype.append = function (path, data, callback) {
                     
                 } else {
                     
-                    return callback(new Error('expected http 200 ok'));
+                    return callback(new Error('expected http 200: ' + response.body));
                     
                 }
                 
