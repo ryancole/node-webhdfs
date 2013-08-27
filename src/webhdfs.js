@@ -311,20 +311,27 @@ WebHDFSClient.prototype.append = function (path, data, callback) {
 
 // ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#CREATE
 WebHDFSClient.prototype.create = function (path, data, options, callback) {
-    if(callback===undefined && typeof(options) === 'function'){
-      callback=options;
-      options=undefined;
+
+    if (callback === undefined && typeof(options) === 'function') {
+
+        callback = options;
+        options = undefined;
+
     }
     
     // generate query string
     var args = {
+
         json: true,
         followRedirect: false,
         uri: this.base_url + path,
         qs: _.defaults({
+
             op: 'create',
             'user.name': this.options.user
-        },options || {})
+
+        }, options || {})
+
     };
     
     // send http request
