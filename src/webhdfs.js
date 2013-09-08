@@ -49,6 +49,9 @@ WebHDFSClient.prototype.del = function (path, hdfsoptions, requestoptions, callb
     // send http request
     request.del(args, function (error, response, body) {
         
+        // forward request error
+        if (error) return callback(error);
+        
         // exception handling
         if ('RemoteException' in body)
             return callback(new Error(body.RemoteException.message));
@@ -88,6 +91,9 @@ WebHDFSClient.prototype.listStatus = function (path, hdfsoptions, requestoptions
     // send http request
     request.get(args, function (error, response, body) {
         
+        // forward request error
+        if (error) return callback(error);
+        
         // execute callback
         return callback(null, body.FileStatuses.FileStatus)
         
@@ -122,6 +128,9 @@ WebHDFSClient.prototype.getFileStatus = function (path, hdfsoptions, requestopti
     
     // send http request
     request.get(args, function (error, response, body) {
+        
+        // forward request error
+        if (error) return callback(error);
         
         // exception handling
         if ('RemoteException' in body)
@@ -162,6 +171,9 @@ WebHDFSClient.prototype.getContentSummary = function (path, hdfsoptions, request
     // send http request
     request.get(args, function (error, response, body) {
         
+        // forward request error
+        if (error) return callback(error);
+        
         // exception handling
         if ('RemoteException' in body)
             return callback(new Error(body.RemoteException.message));
@@ -200,6 +212,9 @@ WebHDFSClient.prototype.getFileChecksum = function (path, hdfsoptions, requestop
     
     // send http request
     request.get(args, function (error, response, body) {
+        
+        // forward request error
+        if (error) return callback(error);
         
         // exception handling
         if ('RemoteException' in body)
@@ -240,6 +255,9 @@ WebHDFSClient.prototype.getHomeDirectory = function (hdfsoptions, requestoptions
     // send http request
     request.get(args, function (error, response, body) {
         
+        // forward request error
+        if (error) return callback(error);
+        
         // execute callback
         return callback(null, body.Path);
         
@@ -273,6 +291,9 @@ WebHDFSClient.prototype.open = function (path, hdfsoptions, requestoptions, call
 
     // send http request
     request.get(args, function (error, response, body) {
+        
+        // forward request error
+        if (error) return callback(error);
         
         // execute callback
         return callback(null, body);
@@ -309,7 +330,10 @@ WebHDFSClient.prototype.rename = function (path, destination, hdfsoptions, reque
     }, requestoptions || {});
     
     // send http request
-    request.put(args, function (err, res, body) {
+    request.put(args, function (error, res, body) {
+        
+        // forward request error
+        if (error) return callback(error);
         
         // exception handling
         if ('RemoteException' in body)
@@ -350,6 +374,9 @@ WebHDFSClient.prototype.mkdirs = function (path, hdfsoptions, requestoptions, ca
     
     // send http request
     request.put(args, function (error, response, body) {
+        
+        // forward request error
+        if (error) return callback(error);
         
         // exception handling
         if ('RemoteException' in body)
@@ -392,22 +419,28 @@ WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptio
     }, requestoptions || {});
     
     // send http request
-    request.post(args, function (err, response, body) {
+    request.post(args, function (error, response, body) {
+        
+        // forward request error
+        if (error) return callback(error);
         
         // check for expected redirect
         if (response.statusCode == 307) {
             
             // format request args
-            args = {
+            args = _.defaults({
                 
                 body: data,
                 uri: response.headers.location
                 
-            };
+            }, requestoptions || {});
             
             // send http request
-            request.post(args, function (err, response, body) {
+            request.post(args, function (error, response, body) {
                 
+                // forward request error
+                if (error) return callback(error);
+        
                 // check for expected response
                 if (response.statusCode == 200) {
                     
@@ -464,18 +497,24 @@ WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptio
     // send http request
     request.put(args, function (error, response, body) {
                 
+        // forward request error
+        if (error) return callback(error);
+        
         // check for expected redirect
         if (response.statusCode == 307) {
             
             // generate query string
-            args = {
+            args = _.defaults({
                 body: data,
                 uri: response.headers.location
-            };
+            }, requestoptions || {});
             
             // send http request
             request.put(args, function (error, response, body) {
                 
+                // forward request error
+                if (error) return callback(error);
+        
                 // check for expected created response
                 if (response.statusCode == 201) {
                     
