@@ -172,16 +172,28 @@ WebHDFSClient.prototype.getHomeDirectory = function (callback) {
 
 
 // ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#OPEN
-WebHDFSClient.prototype.open = function (path, callback) {
+WebHDFSClient.prototype.open = function (path, hdfsoptions, requestoptions, callback) {
     
+    // requestoptions may be omitted
+    if(callback===undefined && typeof(requestoptions) === 'function'){
+      callback=requestoptions;
+      requestoptions=undefined;
+    }
+
+    // hdfsoptions may be omitted
+    if(callback===undefined && typeof(hdfsoptions) === 'function'){
+      callback=hdfsoptions;
+      hdfsoptions=undefined;
+    }
+
     // format request args
-    var args = {
+    var args = _.defaults({
         uri: this.base_url + path,
-        qs: {
+        qs: _.defaults({
             op: 'open'
-        }
-    };
-    
+        }, hdfsoptions || {})
+    }, requestoptions || {});
+
     // send http request
     request.get(args, function (error, response, body) {
         
