@@ -290,7 +290,7 @@ WebHDFSClient.prototype.open = function (path, hdfsoptions, requestoptions, call
     }, requestoptions || {});
 
     // send http request
-    request.get(args, function (error, response, body) {
+    return request.get(args, function (error, response, body) {
         
         // forward request error
         if (error) return callback(error);
