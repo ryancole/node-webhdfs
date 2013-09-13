@@ -2,7 +2,7 @@
     "name": "node-webhdfs",
     "main": "src/webhdfs.js",
     "description": "A WebHDFS module for Node.js.",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "keywords": ["hdfs", "webhdfs", "http"],
     "maintainers": ["Ryan Cole <ryan@rycole.com> (http://rycole.com)"],
     "contributors": ["Ryan Cole <ryan@rycole.com> (http://rycole.com)"],

@@ -25,15 +25,19 @@ var WebHDFSClient = exports.WebHDFSClient = function (options) {
 WebHDFSClient.prototype.del = function (path, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
-    if(callback===undefined && typeof(requestoptions) === 'function'){
-      callback=requestoptions;
-      requestoptions=undefined;
+    if (callback === undefined && typeof(requestoptions) === 'function') {
+
+        callback = requestoptions;
+        requestoptions = undefined;
+
     }
 
     // hdfsoptions may be omitted
-    if(callback===undefined && typeof(hdfsoptions) === 'function'){
-      callback=hdfsoptions;
-      hdfsoptions=undefined;
+    if (callback === undefined && typeof(hdfsoptions) === 'function') {
+
+        callback = hdfsoptions;
+        hdfsoptions = undefined;
+
     }
     
     // format request args
@@ -68,15 +72,18 @@ WebHDFSClient.prototype.del = function (path, hdfsoptions, requestoptions, callb
 WebHDFSClient.prototype.listStatus = function (path, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
-    if(callback===undefined && typeof(requestoptions) === 'function'){
-      callback=requestoptions;
-      requestoptions=undefined;
+    if (callback === undefined && typeof(requestoptions) === 'function') {
+
+        callback = requestoptions;
+        requestoptions = undefined;
     }
 
     // hdfsoptions may be omitted
-    if(callback===undefined && typeof(hdfsoptions) === 'function'){
-      callback=hdfsoptions;
-      hdfsoptions=undefined;
+    if (callback === undefined && typeof(hdfsoptions) === 'function') {
+
+        callback = hdfsoptions;
+        hdfsoptions = undefined;
+
     }
     
     // format request args
@@ -106,15 +113,19 @@ WebHDFSClient.prototype.listStatus = function (path, hdfsoptions, requestoptions
 WebHDFSClient.prototype.getFileStatus = function (path, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
-    if(callback===undefined && typeof(requestoptions) === 'function'){
-      callback=requestoptions;
-      requestoptions=undefined;
+    if (callback === undefined && typeof(requestoptions) === 'function') {
+
+        callback = requestoptions;
+        requestoptions = undefined;
+
     }
 
     // hdfsoptions may be omitted
-    if(callback===undefined && typeof(hdfsoptions) === 'function'){
-      callback=hdfsoptions;
-      hdfsoptions=undefined;
+    if (callback === undefined && typeof(hdfsoptions) === 'function') {
+
+        callback = hdfsoptions;
+        hdfsoptions = undefined;
+
     }
     
     // format request args
@@ -148,15 +159,18 @@ WebHDFSClient.prototype.getFileStatus = function (path, hdfsoptions, requestopti
 WebHDFSClient.prototype.getContentSummary = function (path, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
-    if(callback===undefined && typeof(requestoptions) === 'function'){
-      callback=requestoptions;
-      requestoptions=undefined;
+    if (callback === undefined && typeof(requestoptions) === 'function') {
+
+        callback = requestoptions;
+        requestoptions = undefined;
     }
 
     // hdfsoptions may be omitted
-    if(callback===undefined && typeof(hdfsoptions) === 'function'){
-      callback=hdfsoptions;
-      hdfsoptions=undefined;
+    if (callback===undefined && typeof(hdfsoptions) === 'function') {
+
+        callback = hdfsoptions;
+        hdfsoptions = undefined;
+
     }
     
     // format request args
@@ -190,15 +204,19 @@ WebHDFSClient.prototype.getContentSummary = function (path, hdfsoptions, request
 WebHDFSClient.prototype.getFileChecksum = function (path, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
-    if(callback===undefined && typeof(requestoptions) === 'function'){
-      callback=requestoptions;
-      requestoptions=undefined;
+    if (callback === undefined && typeof(requestoptions) === 'function') {
+
+        callback = requestoptions;
+        requestoptions = undefined;
+
     }
 
     // hdfsoptions may be omitted
-    if(callback===undefined && typeof(hdfsoptions) === 'function'){
-      callback=hdfsoptions;
-      hdfsoptions=undefined;
+    if (callback === undefined && typeof(hdfsoptions) === 'function') {
+
+        callback = hdfsoptions;
+        hdfsoptions = undefined;
+
     }
     
     // format request args
@@ -231,15 +249,19 @@ WebHDFSClient.prototype.getFileChecksum = function (path, hdfsoptions, requestop
 WebHDFSClient.prototype.getHomeDirectory = function (hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
-    if(callback===undefined && typeof(requestoptions) === 'function'){
-      callback=requestoptions;
-      requestoptions=undefined;
+    if (callback === undefined && typeof(requestoptions) === 'function') {
+
+        callback = requestoptions;
+        requestoptions = undefined;
+
     }
 
     // hdfsoptions may be omitted
-    if(callback===undefined && typeof(hdfsoptions) === 'function'){
-      callback=hdfsoptions;
-      hdfsoptions=undefined;
+    if (callback===undefined && typeof(hdfsoptions) === 'function') {
+
+        callback = hdfsoptions;
+        hdfsoptions = undefined;
+
     }
     
     // format request args
@@ -270,15 +292,19 @@ WebHDFSClient.prototype.getHomeDirectory = function (hdfsoptions, requestoptions
 WebHDFSClient.prototype.open = function (path, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
-    if(callback===undefined && typeof(requestoptions) === 'function'){
-      callback=requestoptions;
-      requestoptions=undefined;
+    if (callback === undefined && typeof(requestoptions) === 'function') {
+
+        callback = requestoptions;
+        requestoptions = undefined;
+
     }
 
     // hdfsoptions may be omitted
-    if(callback===undefined && typeof(hdfsoptions) === 'function'){
-      callback=hdfsoptions;
-      hdfsoptions=undefined;
+    if (callback === undefined && typeof(hdfsoptions) === 'function') {
+
+        callback = hdfsoptions;
+        hdfsoptions = undefined;
+
     }
 
     // format request args
@@ -307,15 +333,19 @@ WebHDFSClient.prototype.open = function (path, hdfsoptions, requestoptions, call
 WebHDFSClient.prototype.rename = function (path, destination, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
-    if(callback===undefined && typeof(requestoptions) === 'function'){
-      callback=requestoptions;
-      requestoptions=undefined;
+    if (callback === undefined && typeof(requestoptions) === 'function') {
+
+        callback = requestoptions;
+        requestoptions = undefined;
+
     }
 
     // hdfsoptions may be omitted
-    if(callback===undefined && typeof(hdfsoptions) === 'function'){
-      callback=hdfsoptions;
-      hdfsoptions=undefined;
+    if (callback === undefined && typeof(hdfsoptions) === 'function') {
+
+        callback = hdfsoptions;
+        hdfsoptions = undefined;
+
     }
     
     // format request args
@@ -351,15 +381,19 @@ WebHDFSClient.prototype.rename = function (path, destination, hdfsoptions, reque
 WebHDFSClient.prototype.mkdirs = function (path, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
-    if(callback===undefined && typeof(requestoptions) === 'function'){
-      callback=requestoptions;
-      requestoptions=undefined;
+    if (callback === undefined && typeof(requestoptions) === 'function') {
+
+        callback = requestoptions;
+        requestoptions = undefined;
+
     }
 
     // hdfsoptions may be omitted
-    if(callback===undefined && typeof(hdfsoptions) === 'function'){
-      callback=hdfsoptions;
-      hdfsoptions=undefined;
+    if (callback === undefined && typeof(hdfsoptions) === 'function') {
+
+        callback = hdfsoptions;
+        hdfsoptions = undefined;
+
     }
     
     // generate query string
@@ -394,15 +428,19 @@ WebHDFSClient.prototype.mkdirs = function (path, hdfsoptions, requestoptions, ca
 WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
-    if(callback===undefined && typeof(requestoptions) === 'function'){
-      callback=requestoptions;
-      requestoptions=undefined;
+    if (callback === undefined && typeof(requestoptions) === 'function') {
+
+        callback = requestoptions;
+        requestoptions = undefined;
+
     }
 
     // hdfsoptions may be omitted
-    if(callback===undefined && typeof(hdfsoptions) === 'function'){
-      callback=hdfsoptions;
-      hdfsoptions=undefined;
+    if (callback === undefined && typeof(hdfsoptions) === 'function') {
+
+        callback = hdfsoptions;
+        hdfsoptions = undefined;
+
     }
     
     // format request args
@@ -469,15 +507,19 @@ WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptio
 WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
-    if(callback===undefined && typeof(requestoptions) === 'function'){
-      callback=requestoptions;
-      requestoptions=undefined;
+    if (callback === undefined && typeof(requestoptions) === 'function') {
+
+        callback = requestoptions;
+        requestoptions = undefined;
+
     }
 
     // hdfsoptions may be omitted
-    if(callback===undefined && typeof(hdfsoptions) === 'function'){
-      callback=hdfsoptions;
-      hdfsoptions=undefined;
+    if (callback === undefined && typeof(hdfsoptions) === 'function') {
+
+        callback = hdfsoptions;
+        hdfsoptions = undefined;
+
     }
     
     // generate query string
