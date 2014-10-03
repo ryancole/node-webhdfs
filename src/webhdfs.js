@@ -1,6 +1,7 @@
 var querystring = require('querystring'),
     request = require('request'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    RemoteException = exports.RemoteException = require('./remoteexception.js');
 
 
 var WebHDFSClient = exports.WebHDFSClient = function (options) {
@@ -57,8 +58,9 @@ WebHDFSClient.prototype.del = function (path, hdfsoptions, requestoptions, callb
         if (error) return callback(error);
         
         // exception handling
-        if ('RemoteException' in body)
-            return callback(new Error(body.RemoteException.message));
+        if ('RemoteException' in body){
+            return callback(new RemoteException(body));
+        }
         
         // execute callback
         return callback(null, body.boolean);
@@ -101,6 +103,11 @@ WebHDFSClient.prototype.listStatus = function (path, hdfsoptions, requestoptions
         // forward request error
         if (error) return callback(error);
         
+        // exception handling
+        if ('RemoteException' in body){
+            return callback(new RemoteException(body));
+        }
+
         // execute callback
         return callback(null, body.FileStatuses.FileStatus)
         
@@ -144,8 +151,9 @@ WebHDFSClient.prototype.getFileStatus = function (path, hdfsoptions, requestopti
         if (error) return callback(error);
         
         // exception handling
-        if ('RemoteException' in body)
-            return callback(new Error(body.RemoteException.message));
+        if ('RemoteException' in body){
+            return callback(new RemoteException(body));
+        }
         
         // execute callback
         return callback(null, body.FileStatus);
@@ -189,8 +197,9 @@ WebHDFSClient.prototype.getContentSummary = function (path, hdfsoptions, request
         if (error) return callback(error);
         
         // exception handling
-        if ('RemoteException' in body)
-            return callback(new Error(body.RemoteException.message));
+        if ('RemoteException' in body){
+            return callback(new RemoteException(body));
+        }
         
         // execute callback
         return callback(null, body.ContentSummary);
@@ -235,8 +244,9 @@ WebHDFSClient.prototype.getFileChecksum = function (path, hdfsoptions, requestop
         if (error) return callback(error);
         
         // exception handling
-        if ('RemoteException' in body)
-            return callback(new Error(body.RemoteException.message));
+        if ('RemoteException' in body){
+            return callback(new RemoteException(body));
+        }
         
         // execute callback
         return callback(null, body.FileChecksum);
@@ -366,8 +376,9 @@ WebHDFSClient.prototype.rename = function (path, destination, hdfsoptions, reque
         if (error) return callback(error);
         
         // exception handling
-        if ('RemoteException' in body)
-            return callback(new Error(body.RemoteException.message));
+        if ('RemoteException' in body){
+            return callback(new RemoteException(body));
+        }
         
         // execute callback
         return callback(null, body.boolean);
@@ -413,8 +424,9 @@ WebHDFSClient.prototype.mkdirs = function (path, hdfsoptions, requestoptions, ca
         if (error) return callback(error);
         
         // exception handling
-        if ('RemoteException' in body)
-            return callback(new Error(body.RemoteException.message));
+        if ('RemoteException' in body){
+            return callback(new RemoteException(body));
+        }
         
         // execute callback
         return callback(null, body.boolean);
