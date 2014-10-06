@@ -107,8 +107,8 @@ describe('WebHDFSClient', function () {
                 
                 should.not.exist(err);
                 should.exist(checksum);
-                
-                checksum.should.have.property('algorithm', 'MD5-of-0MD5-of-512CRC32');
+
+                checksum.should.have.property('algorithm', 'MD5-of-0MD5-of-512CRC32C');
                 
                 return done();
                 
