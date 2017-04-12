@@ -319,6 +319,7 @@ WebHDFSClient.prototype.open = function (path, hdfsoptions, requestoptions, call
 
     // format request args
     var args = _.defaults({
+        json: true,
         uri: this.base_url + path,
         qs: _.defaults({
             op: 'open'
@@ -330,7 +331,10 @@ WebHDFSClient.prototype.open = function (path, hdfsoptions, requestoptions, call
         
         // forward request error
         if (error) return callback(error);
-        
+
+        if (typeof body === 'object' && 'RemoteException' in body){
+            return callback(new RemoteException(body));
+        }
         // execute callback
         return callback(null, body);
         
