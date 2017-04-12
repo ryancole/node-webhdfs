@@ -1,4 +1,5 @@
 var querystring = require('querystring'),
+    Stream = require('stream'),
     request = require('request'),
     _ = require('underscore'),
     RemoteException = exports.RemoteException = require('./remoteexception.js');
@@ -540,35 +541,32 @@ WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptio
     
     // generate query string
     var args = _.defaults({
-
-        json: true,
         followRedirect: false,
         uri: this.base_url + path,
         qs: _.defaults({
-
             op: 'create',
             'user.name': this.options.user
 
         }, hdfsoptions || {})
     }, requestoptions || {});
-    
+
     // send http request
     request.put(args, function (error, response, body) {
                 
         // forward request error
         if (error) return callback(error);
-        
+
         // check for expected redirect
         if (response.statusCode == 307) {
-            
             // generate query string
+          var beforeArgs = args;
             args = _.defaults({
-                body: data,
+                body: data instanceof Stream ? null : data,
                 uri: response.headers.location
             }, requestoptions || {});
-            
+
             // send http request
-            request.put(args, function (error, response, body) {
+            var putRequest = request.put(args, function (error, response, body) {
                 
                 // forward request error
                 if (error) return callback(error);
@@ -586,7 +584,8 @@ WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptio
                 }
                 
             });
-            
+          if(data instanceof Stream === true) data.pipe(putRequest);
+
         } else {
             
             return callback(new Error('expected redirect'));
