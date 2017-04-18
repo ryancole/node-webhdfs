@@ -4,7 +4,44 @@ var should = require('should');
 
 describe('WebHDFSClient', function () {
     
-    var client = new (require('..')).WebHDFSClient({ user: 'ryan' });
+    var client = new (require('..')).WebHDFSClient({
+        "user": "hdfs",
+        "namenode_port": 50070,
+        "path_prefix": "/webhdfs/v1",
+        namenode_host: "c1b5s2.tera4.terascope.io",
+        "namenode_list": ["c1b5s2.tera4.terascope.io", "c1b5s1.tera4.terascope.io"]
+    });
+
+    var client2 = new (require('..')).WebHDFSClient({
+        namenode_host: "endpoint1"
+    });
+
+    var client3 = new (require('..')).WebHDFSClient({
+        namenode_host: "endpoint1",
+        namenode_list: ["endpoint1", "endpoint2"]
+    });
+
+    describe('change endpoint', function () {
+
+        it('should set high_availability to false if a list is not provided', function (done) {
+            client2.should.have.property('base_url', 'http://endpoint1:50070/webhdfs/v1');
+            client2.options.should.have.property('high_availability', false);
+
+            return done()
+        });
+
+        it('should change endpoint if a list is provided', function (done) {
+            client3.should.have.property('base_url', 'http://endpoint1:50070/webhdfs/v1');
+            client3.options.should.have.property('high_availability', true);
+
+            client3._changeNameNodeHost();
+            client3.should.have.property('base_url', 'http://endpoint2:50070/webhdfs/v1');
+
+            return done()
+        });
+
+    });
+    
     
     describe('#mkdirs', function () {
         
@@ -127,7 +164,7 @@ describe('WebHDFSClient', function () {
                 should.not.exist(err);
                 should.exist(data);
                 
-                JSON.parse(data).should.have.property('foo', 'bar');
+              (data).should.have.property('foo', 'bar');
                 
                 return done();
                 
