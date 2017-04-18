@@ -3,15 +3,9 @@ var should = require('should');
 
 
 describe('WebHDFSClient', function () {
-    
-    var client = new (require('..')).WebHDFSClient({
-        "user": "hdfs",
-        "namenode_port": 50070,
-        "path_prefix": "/webhdfs/v1",
-        namenode_host: "c1b5s2.tera4.terascope.io",
-        "namenode_list": ["c1b5s2.tera4.terascope.io", "c1b5s1.tera4.terascope.io"]
-    });
 
+    var client = new (require('..')).WebHDFSClient({ user: 'ryan' });
+    
     var client2 = new (require('..')).WebHDFSClient({
         namenode_host: "endpoint1"
     });
