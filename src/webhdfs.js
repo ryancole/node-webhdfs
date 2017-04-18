@@ -1,6 +1,6 @@
 var querystring = require('querystring'),
     request = require('request'),
-    _ = require('underscore'),
+    _ = require('lodash'),
     RemoteException = exports.RemoteException = require('./remoteexception.js');
 
 
@@ -12,14 +12,55 @@ var WebHDFSClient = exports.WebHDFSClient = function (options) {
         user: 'webuser',
         namenode_port: 50070,
         namenode_host: 'localhost',
-        path_prefix: '/webhdfs/v1'
-        
+        path_prefix: '/webhdfs/v1',
+        high_availability: false
     });
-    
+
+    if (Array.isArray(this.options.namenode_list) && this.options.namenode_list.length > 1) {
+        this.options.high_availability = true
+    }
     // save formatted base api url
     this.base_url = 'http://' + this.options.namenode_host + ':' + this.options.namenode_port + this.options.path_prefix;
     
 };
+
+WebHDFSClient.prototype._makeBaseUrl = function () {
+    this.base_url = 'http://' + this.options.namenode_host + ':' + this.options.namenode_port + this.options.path_prefix;
+};
+
+WebHDFSClient.prototype._changeNameNodeHost = function () {
+    var host = this.options.namenode_host;
+    var list = this.options.namenode_list;
+    var index = list.indexOf(host) + 1;
+    //if empty start from the beginning of the
+    this.options.namenode_host = list[index] ? list[index] : list[0];
+    this._makeBaseUrl();
+};
+
+function _parseResponse(self, fnName, args, bodyArgs, callback, justCheckErrors){
+    // forward request error
+    return function(error, response, body) {
+        if (error) return callback(error);
+
+        // exception handling
+        if (typeof body === 'object' && 'RemoteException' in body) {
+            if(self.options.high_availability && body.RemoteException.exception === 'StandbyException'){
+                //change client
+                self._changeNameNodeHost();
+                return self[fnName].apply(self, args)
+            }
+            else {
+                return callback(new RemoteException(body));
+            }
+        }
+
+        if (justCheckErrors) {
+            return
+        }
+        // execute callback
+        return callback(null, _.get(body, bodyArgs, body));
+    }
+}
 
 
 // ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#DELETE
@@ -27,19 +68,19 @@ WebHDFSClient.prototype.del = function (path, hdfsoptions, requestoptions, callb
     
     // requestoptions may be omitted
     if (callback === undefined && typeof(requestoptions) === 'function') {
-
         callback = requestoptions;
         requestoptions = undefined;
-
     }
 
     // hdfsoptions may be omitted
     if (callback === undefined && typeof(hdfsoptions) === 'function') {
-
         callback = hdfsoptions;
         hdfsoptions = undefined;
-
     }
+    
+    var self = this;
+    var originalArgs = [path, hdfsoptions, requestoptions, callback];
+    var parseResponse = _parseResponse(self, 'del', originalArgs, 'boolean', callback);
     
     // format request args
     var args = _.defaults({
@@ -52,20 +93,7 @@ WebHDFSClient.prototype.del = function (path, hdfsoptions, requestoptions, callb
     }, requestoptions || {});
     
     // send http request
-    request.del(args, function (error, response, body) {
-        
-        // forward request error
-        if (error) return callback(error);
-        
-        // exception handling
-        if ('RemoteException' in body){
-            return callback(new RemoteException(body));
-        }
-        
-        // execute callback
-        return callback(null, body.boolean);
-        
-    });
+    request.del(args, parseResponse);
     
 };
 
@@ -75,19 +103,20 @@ WebHDFSClient.prototype.listStatus = function (path, hdfsoptions, requestoptions
     
     // requestoptions may be omitted
     if (callback === undefined && typeof(requestoptions) === 'function') {
-
         callback = requestoptions;
         requestoptions = undefined;
     }
 
     // hdfsoptions may be omitted
     if (callback === undefined && typeof(hdfsoptions) === 'function') {
-
         callback = hdfsoptions;
         hdfsoptions = undefined;
-
     }
-    
+
+    var self = this;
+    var originalArgs = [path, hdfsoptions, requestoptions, callback];
+    var parseResponse = _parseResponse(self, 'listStatus', originalArgs, 'FileStatuses.FileStatus', callback);
+
     // format request args
     var args = _.defaults({
         json:true,
@@ -98,22 +127,9 @@ WebHDFSClient.prototype.listStatus = function (path, hdfsoptions, requestoptions
     }, requestoptions || {});
     
     // send http request
-    request.get(args, function (error, response, body) {
-        
-        // forward request error
-        if (error) return callback(error);
-        
-        // exception handling
-        if ('RemoteException' in body){
-            return callback(new RemoteException(body));
-        }
-
-        // execute callback
-        return callback(null, body.FileStatuses.FileStatus)
-        
-    })
+    request.get(args, parseResponse)
     
-}
+};
 
 
 // ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#GETFILESTATUS
@@ -121,20 +137,20 @@ WebHDFSClient.prototype.getFileStatus = function (path, hdfsoptions, requestopti
     
     // requestoptions may be omitted
     if (callback === undefined && typeof(requestoptions) === 'function') {
-
         callback = requestoptions;
         requestoptions = undefined;
-
     }
 
     // hdfsoptions may be omitted
     if (callback === undefined && typeof(hdfsoptions) === 'function') {
-
         callback = hdfsoptions;
         hdfsoptions = undefined;
-
     }
     
+    var self = this;
+    var originalArgs = [path, hdfsoptions, requestoptions, callback];
+    var parseResponse = _parseResponse(self, 'getFileStatus', originalArgs, 'FileStatus', callback);
+
     // format request args
     var args = _.defaults({
         json: true,
@@ -145,20 +161,7 @@ WebHDFSClient.prototype.getFileStatus = function (path, hdfsoptions, requestopti
     }, requestoptions || {});
     
     // send http request
-    request.get(args, function (error, response, body) {
-        
-        // forward request error
-        if (error) return callback(error);
-        
-        // exception handling
-        if ('RemoteException' in body){
-            return callback(new RemoteException(body));
-        }
-        
-        // execute callback
-        return callback(null, body.FileStatus);
-        
-    });
+    request.get(args, parseResponse);
     
 };
 
@@ -168,19 +171,20 @@ WebHDFSClient.prototype.getContentSummary = function (path, hdfsoptions, request
     
     // requestoptions may be omitted
     if (callback === undefined && typeof(requestoptions) === 'function') {
-
         callback = requestoptions;
         requestoptions = undefined;
     }
 
     // hdfsoptions may be omitted
     if (callback===undefined && typeof(hdfsoptions) === 'function') {
-
         callback = hdfsoptions;
         hdfsoptions = undefined;
-
     }
     
+    var self = this;
+    var originalArgs = [path, hdfsoptions, requestoptions, callback];
+    var parseResponse = _parseResponse(self, 'getContentSummary', originalArgs, 'ContentSummary', callback);
+
     // format request args
     var args = _.defaults({
         json: true,
@@ -191,20 +195,7 @@ WebHDFSClient.prototype.getContentSummary = function (path, hdfsoptions, request
     }, requestoptions || {});
     
     // send http request
-    request.get(args, function (error, response, body) {
-        
-        // forward request error
-        if (error) return callback(error);
-        
-        // exception handling
-        if ('RemoteException' in body){
-            return callback(new RemoteException(body));
-        }
-        
-        // execute callback
-        return callback(null, body.ContentSummary);
-        
-    });
+    request.get(args, parseResponse);
     
 };
 
@@ -214,19 +205,19 @@ WebHDFSClient.prototype.getFileChecksum = function (path, hdfsoptions, requestop
     
     // requestoptions may be omitted
     if (callback === undefined && typeof(requestoptions) === 'function') {
-
         callback = requestoptions;
         requestoptions = undefined;
-
     }
 
     // hdfsoptions may be omitted
     if (callback === undefined && typeof(hdfsoptions) === 'function') {
-
         callback = hdfsoptions;
         hdfsoptions = undefined;
-
     }
+
+    var self = this;
+    var originalArgs = [path, hdfsoptions, requestoptions, callback];
+    var parseResponse = _parseResponse(self, 'getFileChecksum', originalArgs, 'FileChecksum', callback);
     
     // format request args
     var args = _.defaults({
@@ -238,20 +229,7 @@ WebHDFSClient.prototype.getFileChecksum = function (path, hdfsoptions, requestop
     }, requestoptions || {});
     
     // send http request
-    request.get(args, function (error, response, body) {
-        
-        // forward request error
-        if (error) return callback(error);
-        
-        // exception handling
-        if ('RemoteException' in body){
-            return callback(new RemoteException(body));
-        }
-        
-        // execute callback
-        return callback(null, body.FileChecksum);
-        
-    });
+    request.get(args, parseResponse);
 };
 
 
@@ -260,19 +238,19 @@ WebHDFSClient.prototype.getHomeDirectory = function (hdfsoptions, requestoptions
     
     // requestoptions may be omitted
     if (callback === undefined && typeof(requestoptions) === 'function') {
-
         callback = requestoptions;
         requestoptions = undefined;
-
     }
 
     // hdfsoptions may be omitted
     if (callback===undefined && typeof(hdfsoptions) === 'function') {
-
         callback = hdfsoptions;
         hdfsoptions = undefined;
-
     }
+    
+    var self = this;
+    var originalArgs = [path, hdfsoptions, requestoptions, callback];
+    var parseResponse = _parseResponse(self, 'getHomeDirectory', originalArgs, 'Path', callback);
     
     // format request args
     var args = _.defaults({
@@ -285,38 +263,28 @@ WebHDFSClient.prototype.getHomeDirectory = function (hdfsoptions, requestoptions
     }, requestoptions || {});
     
     // send http request
-    request.get(args, function (error, response, body) {
-        
-        // forward request error
-        if (error) return callback(error);
-        
-        // execute callback
-        return callback(null, body.Path);
-        
-    });
+    request.get(args, parseResponse);
     
 };
-
 
 // ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#OPEN
 WebHDFSClient.prototype.open = function (path, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
     if (callback === undefined && typeof(requestoptions) === 'function') {
-
         callback = requestoptions;
         requestoptions = undefined;
-
     }
 
     // hdfsoptions may be omitted
     if (callback === undefined && typeof(hdfsoptions) === 'function') {
-
         callback = hdfsoptions;
         hdfsoptions = undefined;
-
     }
 
+    var self = this;
+    var originalArgs = [path, hdfsoptions, requestoptions, callback];
+    var parseResponse = _parseResponse(self, 'open', originalArgs, null, callback);
     // format request args
     var args = _.defaults({
         json: true,
@@ -327,18 +295,7 @@ WebHDFSClient.prototype.open = function (path, hdfsoptions, requestoptions, call
     }, requestoptions || {});
 
     // send http request
-    return request.get(args, function (error, response, body) {
-        
-        // forward request error
-        if (error) return callback(error);
-
-        if (typeof body === 'object' && 'RemoteException' in body){
-            return callback(new RemoteException(body));
-        }
-        // execute callback
-        return callback(null, body);
-        
-    });
+    return request.get(args, parseResponse);
     
 };
 
@@ -348,19 +305,19 @@ WebHDFSClient.prototype.rename = function (path, destination, hdfsoptions, reque
     
     // requestoptions may be omitted
     if (callback === undefined && typeof(requestoptions) === 'function') {
-
         callback = requestoptions;
         requestoptions = undefined;
-
     }
 
     // hdfsoptions may be omitted
     if (callback === undefined && typeof(hdfsoptions) === 'function') {
-
         callback = hdfsoptions;
         hdfsoptions = undefined;
-
     }
+
+    var self = this;
+    var originalArgs = [path, hdfsoptions, requestoptions, callback];
+    var parseResponse = _parseResponse(self, 'rename', originalArgs, 'boolean', callback);
     
     // format request args
     var args = _.defaults({
@@ -374,42 +331,29 @@ WebHDFSClient.prototype.rename = function (path, destination, hdfsoptions, reque
     }, requestoptions || {});
     
     // send http request
-    request.put(args, function (error, res, body) {
-        
-        // forward request error
-        if (error) return callback(error);
-        
-        // exception handling
-        if ('RemoteException' in body){
-            return callback(new RemoteException(body));
-        }
-        
-        // execute callback
-        return callback(null, body.boolean);
-        
-    });
+    request.put(args, parseResponse);
     
 };
 
 
 // ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#MKDIRS
 WebHDFSClient.prototype.mkdirs = function (path, hdfsoptions, requestoptions, callback) {
-    
+
     // requestoptions may be omitted
     if (callback === undefined && typeof(requestoptions) === 'function') {
-
         callback = requestoptions;
         requestoptions = undefined;
-
     }
 
     // hdfsoptions may be omitted
     if (callback === undefined && typeof(hdfsoptions) === 'function') {
-
         callback = hdfsoptions;
         hdfsoptions = undefined;
-
     }
+
+    var self = this;
+    var originalArgs = [path, hdfsoptions, requestoptions, callback];
+    var parseResponse = _parseResponse(self, 'mkdirs', originalArgs, 'boolean', callback);
     
     // generate query string
     var args = _.defaults({
@@ -420,22 +364,9 @@ WebHDFSClient.prototype.mkdirs = function (path, hdfsoptions, requestoptions, ca
             'user.name': this.options.user
         }, hdfsoptions || {})
     }, requestoptions || {});
-    
+
     // send http request
-    request.put(args, function (error, response, body) {
-        
-        // forward request error
-        if (error) return callback(error);
-        
-        // exception handling
-        if ('RemoteException' in body){
-            return callback(new RemoteException(body));
-        }
-        
-        // execute callback
-        return callback(null, body.boolean);
-        
-    });
+    request.put(args, parseResponse);
     
 };
 
@@ -445,19 +376,19 @@ WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptio
     
     // requestoptions may be omitted
     if (callback === undefined && typeof(requestoptions) === 'function') {
-
         callback = requestoptions;
         requestoptions = undefined;
-
     }
 
     // hdfsoptions may be omitted
     if (callback === undefined && typeof(hdfsoptions) === 'function') {
-
         callback = hdfsoptions;
         hdfsoptions = undefined;
-
     }
+
+    var self = this;
+    var originalArgs = [path, hdfsoptions, requestoptions, callback];
+    var parseResponse = _parseResponse(self, 'append', originalArgs, null, callback, true);
     
     // format request args
     var args = _.defaults({
@@ -475,47 +406,35 @@ WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptio
     // send http request
     request.post(args, function (error, response, body) {
         
-        // forward request error
-        if (error) return callback(error);
+       parseResponse(error, response, body);
         
         // check for expected redirect
         if (response.statusCode == 307) {
             
             // format request args
             args = _.defaults({
-                
                 body: data,
                 uri: response.headers.location
-                
             }, requestoptions || {});
             
             // send http request
             request.post(args, function (error, response, body) {
                 
                 // forward request error
-                if (error) return callback(error);
+                parseResponse(error, response, body);
         
                 // check for expected response
                 if (response.statusCode == 200) {
-                    
                     return callback(null, true);
-                    
                 } else {
-                    
                     return callback(new Error('expected http 200: ' + response.body));
-                    
                 }
-                
             });
             
         } else {
-            
             return callback(new Error('expected redirect'));
-            
         }
-        
-    }.bind(this));
-    
+    });
 };
 
 
@@ -524,19 +443,19 @@ WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptio
     
     // requestoptions may be omitted
     if (callback === undefined && typeof(requestoptions) === 'function') {
-
         callback = requestoptions;
         requestoptions = undefined;
-
     }
 
     // hdfsoptions may be omitted
     if (callback === undefined && typeof(hdfsoptions) === 'function') {
-
         callback = hdfsoptions;
         hdfsoptions = undefined;
-
     }
+
+    var self = this;
+    var originalArgs = [path, hdfsoptions, requestoptions, callback];
+    var parseResponse = _parseResponse(self, 'create', originalArgs, null, callback, true);
     
     // generate query string
     var args = _.defaults({
@@ -556,7 +475,7 @@ WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptio
     request.put(args, function (error, response, body) {
                 
         // forward request error
-        if (error) return callback(error);
+        parseResponse(error, response, body);
         
         // check for expected redirect
         if (response.statusCode == 307) {
@@ -571,28 +490,21 @@ WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptio
             request.put(args, function (error, response, body) {
                 
                 // forward request error
-                if (error) return callback(error);
+                parseResponse(error, response, body);
         
                 // check for expected created response
                 if (response.statusCode == 201) {
-                    
                     // execute callback
                     return callback(null, response.headers.location);
-                    
                 } else {
-                    
                     return callback(new Error('expected http 201 created'));
-                    
                 }
-                
             });
             
         } else {
-            
             return callback(new Error('expected redirect'));
-            
         }
         
-    }.bind(this));
+    });
     
 };
