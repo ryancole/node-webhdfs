@@ -407,10 +407,12 @@ WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptio
     request.post(args, function (error, response, body) {
         
        parseResponse(error, response, body);
-        
-        // check for expected redirect
-        if (response.statusCode == 307) {
-            
+       // check for HDFS server unreachable
+       if (! response ) {
+           return callback(new Error('no response'));
+       }
+       // check for expected redirect
+       else if (response.statusCode == 307) {
             // format request args
             args = _.defaults({
                 body: data,
@@ -476,7 +478,10 @@ WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptio
                 
         // forward request error
         parseResponse(error, response, body);
-        
+        // check for HDFS server unreachable
+        if (! response ) {
+          return callback(new Error('no response'));
+        }
         // check for expected redirect
         if (response.statusCode == 307) {
             
