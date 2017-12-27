@@ -405,10 +405,14 @@ WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptio
     
     // send http request
     request.post(args, function (error, response, body) {
-        
+
        parseResponse(error, response, body);
+       if (error) {
+           // callback already called
+           return;
+       }
        // check for HDFS server unreachable
-       if (! response ) {
+       else if (! response) {
            return callback(new Error('no response'));
        }
        // check for expected redirect
@@ -424,12 +428,14 @@ WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptio
                 
                 // forward request error
                 parseResponse(error, response, body);
-        
+                if (error) {
+                    return;
+                }
                 // check for expected response
-                if (response.statusCode == 200) {
+                if (response && response.statusCode == 200) {
                     return callback(null, true);
                 } else {
-                    return callback(new Error('expected http 200: ' + response.body));
+                    return callback(new Error('expected http 200: ' + response ? response.body : response));
                 }
             });
             
@@ -478,12 +484,16 @@ WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptio
                 
         // forward request error
         parseResponse(error, response, body);
+        if (error) {
+            // callback already called
+            return;
+        }
         // check for HDFS server unreachable
-        if (! response ) {
-          return callback(new Error('no response'));
+        else if (! response) {
+            return callback(new Error('expected response for HDFS'));
         }
         // check for expected redirect
-        if (response.statusCode == 307) {
+        else if (response.statusCode == 307) {
             
             // generate query string
             args = _.defaults({
@@ -496,9 +506,11 @@ WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptio
                 
                 // forward request error
                 parseResponse(error, response, body);
-        
+                if (error) {
+                    return;
+                }
                 // check for expected created response
-                if (response.statusCode == 201) {
+                if (response && response.statusCode == 201) {
                     // execute callback
                     return callback(null, response.headers.location);
                 } else {
