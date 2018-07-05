@@ -5,14 +5,18 @@
   "author": "Ryan Cole <ryan@rycole.com> (http://rycole.com)",
   "homepage": "https://github.com/ryancole/node-webhdfs",
   "main": "src/webhdfs.js",
-  "keywords": ["hdfs", "webhdfs", "http"],
+  "keywords": [
+    "hdfs",
+    "webhdfs",
+    "http"
+  ],
   "bugs": {
     "url": "mailto:ryan@rycole.com"
   },
   "license": "MIT",
   "dependencies": {
-    "request": "^2.45.0",
-    "lodash": "^4.17.4"
+    "request": "^2.87.0",
+    "lodash": "^4.17.10"
   },
   "devDependencies": {
     "mocha": "^1.21.5",
