@@ -63,7 +63,7 @@ function _parseResponse(self, fnName, args, bodyArgs, callback, justCheckErrors)
 }
 
 
-// ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#DELETE
+// ref: http://hadoop.apache.org/common/docs/stable1/webhdfs.html#DELETE
 WebHDFSClient.prototype.del = function (path, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
@@ -98,7 +98,7 @@ WebHDFSClient.prototype.del = function (path, hdfsoptions, requestoptions, callb
 };
 
 
-// ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#LISTSTATUS
+// ref: http://hadoop.apache.org/common/docs/stable1/webhdfs.html#LISTSTATUS
 WebHDFSClient.prototype.listStatus = function (path, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
@@ -132,7 +132,7 @@ WebHDFSClient.prototype.listStatus = function (path, hdfsoptions, requestoptions
 };
 
 
-// ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#GETFILESTATUS
+// ref: http://hadoop.apache.org/common/docs/stable1/webhdfs.html#GETFILESTATUS
 WebHDFSClient.prototype.getFileStatus = function (path, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
@@ -166,7 +166,7 @@ WebHDFSClient.prototype.getFileStatus = function (path, hdfsoptions, requestopti
 };
 
 
-// ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#GETCONTENTSUMMARY
+// ref: http://hadoop.apache.org/common/docs/stable1/webhdfs.html#GETCONTENTSUMMARY
 WebHDFSClient.prototype.getContentSummary = function (path, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
@@ -200,7 +200,7 @@ WebHDFSClient.prototype.getContentSummary = function (path, hdfsoptions, request
 };
 
 
-// ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#GETFILECHECKSUM
+// ref: http://hadoop.apache.org/common/docs/stable1/webhdfs.html#GETFILECHECKSUM
 WebHDFSClient.prototype.getFileChecksum = function (path, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
@@ -233,7 +233,7 @@ WebHDFSClient.prototype.getFileChecksum = function (path, hdfsoptions, requestop
 };
 
 
-// ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#GETHOMEDIRECTORY
+// ref: http://hadoop.apache.org/common/docs/stable1/webhdfs.html#GETHOMEDIRECTORY
 WebHDFSClient.prototype.getHomeDirectory = function (hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
@@ -267,7 +267,7 @@ WebHDFSClient.prototype.getHomeDirectory = function (hdfsoptions, requestoptions
     
 };
 
-// ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#OPEN
+// ref: http://hadoop.apache.org/common/docs/stable1/webhdfs.html#OPEN
 WebHDFSClient.prototype.open = function (path, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
@@ -300,7 +300,7 @@ WebHDFSClient.prototype.open = function (path, hdfsoptions, requestoptions, call
 };
 
 
-// ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#RENAME
+// ref: http://hadoop.apache.org/common/docs/stable1/webhdfs.html#RENAME
 WebHDFSClient.prototype.rename = function (path, destination, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
@@ -336,7 +336,7 @@ WebHDFSClient.prototype.rename = function (path, destination, hdfsoptions, reque
 };
 
 
-// ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#MKDIRS
+// ref: http://hadoop.apache.org/common/docs/stable1/webhdfs.html#MKDIRS
 WebHDFSClient.prototype.mkdirs = function (path, hdfsoptions, requestoptions, callback) {
 
     // requestoptions may be omitted
@@ -371,7 +371,7 @@ WebHDFSClient.prototype.mkdirs = function (path, hdfsoptions, requestoptions, ca
 };
 
 
-// ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#APPEND
+// ref: http://hadoop.apache.org/common/docs/stable1/webhdfs.html#APPEND
 WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
@@ -446,7 +446,7 @@ WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptio
 };
 
 
-// ref: http://hadoop.apache.org/common/docs/r1.0.2/webhdfs.html#CREATE
+// ref: http://hadoop.apache.org/common/docs/stable1/webhdfs.html#CREATE
 WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptions, callback) {
     
     // requestoptions may be omitted
