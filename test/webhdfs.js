@@ -1,6 +1,6 @@
-const username = 'ryan';
-const endpoint1 = 'endpoint1';
-const endpoint2 = 'endpoint2';
+const username = process.env.HDFS_USERNAME || 'ryan';
+const endpoint1 = process.env.HDFS_NAMENODE_1 || 'endpoint1';
+const endpoint2 = process.env.HDFS_NAMENODE_2 || 'endpoint2';
 
 var should = require('should');
 
