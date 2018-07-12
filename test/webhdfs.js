@@ -1,19 +1,21 @@
 const username = process.env.HDFS_USERNAME || 'ryan';
-const endpoint1 = process.env.HDFS_NAMENODE_1 || 'endpoint1';
-const endpoint2 = process.env.HDFS_NAMENODE_2 || 'endpoint2';
+const endpoint1 = process.env.HDFS_NAMENODE_1 || 'localhost';
+const endpoint2 = process.env.HDFS_NAMENODE_2 || '127.0.0.1';
+const basePath = process.env.HDFS_BASE_PATH || `/user/${username}`;
+// endpoint defaults are written differently to verify switching
 
 var should = require('should');
 
 
 describe('WebHDFSClient', function () {
 
-    var client = new (require('..')).WebHDFSClient({ user: username });
-    
-    var client2 = new (require('..')).WebHDFSClient({
+    // never used for actual connection
+    var oneNodeClient = new (require('..')).WebHDFSClient({
         namenode_host: endpoint1
     });
 
-    var client3 = new (require('..')).WebHDFSClient({
+    var twoNodeClient = new (require('..')).WebHDFSClient({
+        user: username,
         namenode_host: endpoint1,
         namenode_list: [endpoint1, endpoint2]
     });
@@ -21,18 +23,18 @@ describe('WebHDFSClient', function () {
     describe('change endpoint', function () {
 
         it('should set high_availability to false if a list is not provided', function (done) {
-            client2.should.have.property('base_url', 'http://' + endpoint1 + ':50070/webhdfs/v1');
-            client2.options.should.have.property('high_availability', false);
+            oneNodeClient.should.have.property('base_url', 'http://' + endpoint1 + ':50070/webhdfs/v1');
+            oneNodeClient.options.should.have.property('high_availability', false);
 
             return done()
         });
 
         it('should change endpoint if a list is provided', function (done) {
-            client3.should.have.property('base_url', 'http://' + endpoint1 + ':50070/webhdfs/v1');
-            client3.options.should.have.property('high_availability', true);
+            twoNodeClient.should.have.property('base_url', 'http://' + endpoint1 + ':50070/webhdfs/v1');
+            twoNodeClient.options.should.have.property('high_availability', true);
 
-            client3._changeNameNodeHost();
-            client3.should.have.property('base_url', 'http://' + endpoint2 + ':50070/webhdfs/v1');
+            twoNodeClient._changeNameNodeHost();
+            twoNodeClient.should.have.property('base_url', 'http://' + endpoint2 + ':50070/webhdfs/v1');
 
             return done()
         });
@@ -44,7 +46,7 @@ describe('WebHDFSClient', function () {
         
         it('should return `true` if the directory was created', function (done) {
             
-            client.mkdirs('/test', function (err, success) {
+            twoNodeClient.mkdirs(basePath + '/test', function (err, success) {
                 
                 should.not.exist(err);
                 should.exist(success);
@@ -63,7 +65,7 @@ describe('WebHDFSClient', function () {
         
         it('should return information about the directory', function (done) {
             
-            client.getFileStatus('/test', function (err, status) {
+            twoNodeClient.getFileStatus(basePath + '/test', function (err, status) {
                 
                 should.not.exist(err);
                 should.exist(status);
@@ -82,7 +84,7 @@ describe('WebHDFSClient', function () {
         
         it('should return the path to the new file', function (done) {
             
-            client.create('/test/foo.txt', '{"foo":"bar"}', function (err, path) {
+            twoNodeClient.create(basePath + '/test/foo.txt', '{"foo":"bar"}', function (err, path) {
                 
                 should.not.exist(err);
                 should.exist(path);
@@ -99,7 +101,7 @@ describe('WebHDFSClient', function () {
         
         it('should return `true` if the file was renamed', function (done) {
             
-            client.rename('/test/foo.txt', '/test/bar.txt', function (err, success) {
+            twoNodeClient.rename(basePath + '/test/foo.txt', basePath + '/test/bar.txt', function (err, success) {
                 
                 should.not.exist(err);
                 should.exist(success);
@@ -118,7 +120,7 @@ describe('WebHDFSClient', function () {
         
         it('should return summary of directory content', function (done) {
             
-            client.getContentSummary('/test', function (err, summary) {
+            twoNodeClient.getContentSummary(basePath + '/test', function (err, summary) {
                 
                 should.not.exist(err);
                 should.exist(summary);
@@ -137,7 +139,7 @@ describe('WebHDFSClient', function () {
         
         it('should return a file checksum', function (done) {
             
-            client.getFileChecksum('/test/bar.txt', function (err, checksum) {
+            twoNodeClient.getFileChecksum(basePath + '/test/bar.txt', function (err, checksum) {
                 
                 should.not.exist(err);
                 should.exist(checksum);
@@ -156,7 +158,7 @@ describe('WebHDFSClient', function () {
         
         it('should return the files content', function (done) {
             
-            client.open('/test/bar.txt', function (err, data) {
+            twoNodeClient.open(basePath + '/test/bar.txt', function (err, data) {
                 
                 should.not.exist(err);
                 should.exist(data);
@@ -175,7 +177,7 @@ describe('WebHDFSClient', function () {
         
         it('should return `true` if the directory was deleted', function (done) {
             
-            client.del('/test', { recursive: true }, function (err, success) {
+            twoNodeClient.del(basePath + '/test', { recursive: true }, function (err, success) {
                 
                 should.not.exist(err);
                 should.exist(success);
