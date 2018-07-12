@@ -1,6 +1,6 @@
 {
   "name": "node-webhdfs",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A WebHDFS module for Node.js.",
   "author": "Ryan Cole <ryan@rycole.com> (http://rycole.com)",
   "homepage": "https://github.com/ryancole/node-webhdfs",

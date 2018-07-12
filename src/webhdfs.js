@@ -1,7 +1,7 @@
-var request = require('request'),
-    _ = require('lodash'),
-    RemoteException = exports.RemoteException = require('./remoteexception.js');
+var _ = require('lodash');
+var request = require('request');
 
+var RemoteException = exports.RemoteException = require('./remoteexception.js');
 
 var WebHDFSClient = exports.WebHDFSClient = function (options) {
     
