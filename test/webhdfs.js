@@ -1,7 +1,8 @@
 const username = process.env.HDFS_USERNAME || 'ryan';
 const endpoint1 = process.env.HDFS_NAMENODE_1 || 'localhost';
 const endpoint2 = process.env.HDFS_NAMENODE_2 || '127.0.0.1';
-const basePath = process.env.HDFS_BASE_PATH || `/user/${username}`;
+const homeDir = `/user/${username}`;
+const basePath = process.env.HDFS_BASE_PATH || homeDir;
 // endpoint defaults are written differently to verify switching
 
 var should = require('should');
@@ -40,7 +41,24 @@ describe('WebHDFSClient', function () {
         });
 
     });
-    
+
+    describe('#getHomeDirectory()', function () {
+        
+        it('should get the home directory', function (done) {
+            
+            twoNodeClient.getHomeDirectory(function (err, status) {
+                
+                should.not.exist(err);
+                should.exist(status);
+                status.should.eql(homeDir);
+                
+                return done();
+                
+            });
+            
+        });
+        
+    });
     
     describe('#mkdirs', function () {
         
@@ -84,7 +102,24 @@ describe('WebHDFSClient', function () {
         
         it('should return the path to the new file', function (done) {
             
-            twoNodeClient.create(basePath + '/test/foo.txt', '{"foo":"bar"}', function (err, path) {
+            twoNodeClient.create(basePath + '/test/foo.txt', 'foo bar', function (err, path) {
+                
+                should.not.exist(err);
+                should.exist(path);
+                
+                return done();
+                
+            });
+            
+        });
+        
+    });
+
+    describe('#append()', function () {
+        
+        it('should add to the file', function (done) {
+            
+            twoNodeClient.append(basePath + '/test/foo.txt', ' baz', function (err, path) {
                 
                 should.not.exist(err);
                 should.exist(path);
@@ -134,6 +169,24 @@ describe('WebHDFSClient', function () {
         });
         
     });
+
+    describe('#listStatus()', function () {
+        
+        it('should list files in a directory', function (done) {
+            
+            twoNodeClient.listStatus(basePath + '/test', function (err, status) {
+                
+                should.not.exist(err);
+                should.exist(status);
+                status.map(f => f.pathSuffix).should.containEql('bar.txt');
+                
+                return done();
+                
+            });
+            
+        });
+        
+    });
     
     describe('#getFileChecksum()', function () {
         
@@ -163,7 +216,7 @@ describe('WebHDFSClient', function () {
                 should.not.exist(err);
                 should.exist(data);
                 
-              (data).should.have.property('foo', 'bar');
+                data.should.eql('foo bar baz');
                 
                 return done();
                 
