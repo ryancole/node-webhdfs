@@ -248,7 +248,7 @@ WebHDFSClient.prototype.getHomeDirectory = function (hdfsoptions, requestoptions
     }
     
     var self = this;
-    var originalArgs = [path, hdfsoptions, requestoptions, callback];
+    var originalArgs = [hdfsoptions, requestoptions, callback];
     var parseResponse = _parseResponse(self, 'getHomeDirectory', originalArgs, 'Path', callback);
     
     // format request args
