@@ -1,5 +1,4 @@
-var querystring = require('querystring'),
-    request = require('request'),
+var request = require('request'),
     _ = require('lodash'),
     RemoteException = exports.RemoteException = require('./remoteexception.js');
 
