@@ -1,5 +1,9 @@
 A WebHDFS module for Node.js
 
+## Notice
+
+I no longer personally use HDFS and have no plans to continue development on this module myself. With that said, many of the more recent contributions to this module have not been from myself, and instead have been from open source contributors - thanks to you folks. If you would like me to add you as a maintainer of this repository then just open a pull request or somehow message me.
+
 # About
 
 I am currently following and testing against the [WebHDFS REST API documentation](http://hadoop.apache.org/docs/r1.2.1/webhdfs.html) for the `1.2.1` release, by Apache. Make sure you enable WebHDFS in the hdfs site configuration file.
