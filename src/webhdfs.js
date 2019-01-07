@@ -35,7 +35,7 @@ WebHDFSClient.prototype._makeBaseUrl = function () {
 // Set up a toggle to determine if the backoff needs to be increased
 WebHDFSClient.prototype._switchedNameNodeClient = false;
 
-WebHDFSClient.prototype._changeNameNodeHost = function () {
+WebHDFSClient.prototype._changeNameNodeHost = function (callback) {
     // If the last operation resulted in a changed NameNode, double the current backoff
     if (this._switchedNameNodeClient) {
         this._backoff_period_ms = this._backoff_period_ms * 2;
@@ -43,19 +43,23 @@ WebHDFSClient.prototype._changeNameNodeHost = function () {
         this._switchedNameNodeClient = true;
     }
     // Wait the backoff period
-    let startTime = (new Date()).getTime();
-    while (((new Date()).getTime() - startTime) < this._backoff_period_ms) {
-        // do nothing
-    }
-    var host = this.options.namenode_host;
-    var list = this.options.namenode_list;
-    var index = list.indexOf(host) + 1;
-    //if empty start from the beginning of the
-    this.options.namenode_host = list[index] ? list[index] : list[0];
-    this._makeBaseUrl();
+    setTimeout(() => {
+        var host = this.options.namenode_host;
+        var list = this.options.namenode_list;
+        var index = list.indexOf(host) + 1;
+        //if empty start from the beginning of the
+        this.options.namenode_host = list[index] ? list[index] : list[0];
+        this._makeBaseUrl();
+        return callback();
+    }, this.backoff_period_ms)
+    // let startTime = (new Date()).getTime();
+    // while (((new Date()).getTime() - startTime) < this._backoff_period_ms) {
+    //     // do nothing
+    // }
 };
 
 function _parseResponse(self, fnName, args, bodyArgs, callback, justCheckErrors){
+    // var changeNameNodeHost = self._changeNameNodeHost(self[fnName].apply(self, args));
     // forward request error
     return function(error, response, body) {
         // If a namenode process dies the connection will be refused, and if the namenode's server
@@ -65,8 +69,12 @@ function _parseResponse(self, fnName, args, bodyArgs, callback, justCheckErrors)
             if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
                 if (self.options.high_availability){
                     //change client
-                    self._changeNameNodeHost();
-                    return self[fnName].apply(self, args)
+                    self._changeNameNodeHost(function () {
+                        return self[fnName].apply(self, args)
+                    });
+                    return true;
+                    // self._changeNameNodeHost(self[fnName].apply(self, args));
+                    // return self[fnName].apply(self, args)
                 }
                 else {
                     return callback(error);
@@ -82,8 +90,13 @@ function _parseResponse(self, fnName, args, bodyArgs, callback, justCheckErrors)
         if (typeof body === 'object' && 'RemoteException' in body) {
             if (self.options.high_availability && body.RemoteException.exception === 'StandbyException'){
                 //change client
-                self._changeNameNodeHost();
-                return self[fnName].apply(self, args)
+                self._changeNameNodeHost(function () {
+                    return self[fnName].apply(self, args)
+                });
+                return true;
+                //change client
+                // self._changeNameNodeHost();
+                // return self[fnName].apply(self, args)
             }
             else {
                 return callback(new RemoteException(body));
@@ -97,7 +110,7 @@ function _parseResponse(self, fnName, args, bodyArgs, callback, justCheckErrors)
         }
 
         if (justCheckErrors) {
-            return
+            return false;
         }
         // execute callback
         return callback(null, _.get(body, bodyArgs, body));
@@ -448,8 +461,8 @@ WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptio
     // send http request
     request.post(args, function (error, response, body) {
 
-       parseResponse(error, response, body);
-       if (error) {
+       var handled = parseResponse(error, response, body);
+       if (handled) {
            // callback already called
            return;
        }
@@ -469,8 +482,8 @@ WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptio
             request.post(args, function (error, response, body) {
 
                 // forward request error
-                parseResponse(error, response, body);
-                if (error) {
+                var handled = parseResponse(error, response, body);
+                if (handled) {
                     return;
                 }
                 // check for expected response
