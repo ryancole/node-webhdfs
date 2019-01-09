@@ -52,14 +52,9 @@ WebHDFSClient.prototype._changeNameNodeHost = function (callback) {
         this._makeBaseUrl();
         return callback();
     }, this.backoff_period_ms)
-    // let startTime = (new Date()).getTime();
-    // while (((new Date()).getTime() - startTime) < this._backoff_period_ms) {
-    //     // do nothing
-    // }
 };
 
 var _parseResponse = exports._parseResponse = function (self, fnName, args, bodyArgs, callback, justCheckErrors){
-    // var changeNameNodeHost = self._changeNameNodeHost(self[fnName].apply(self, args));
     // forward request error
     return function(error, response, body) {
         // If a namenode process dies the connection will be refused, and if the namenode's server
@@ -73,8 +68,6 @@ var _parseResponse = exports._parseResponse = function (self, fnName, args, body
                         return self[fnName].apply(self, args);
                     });
                     return true;
-                    // self._changeNameNodeHost(self[fnName].apply(self, args));
-                    // return self[fnName].apply(self, args)
                 }
                 else {
                     callback(error);
@@ -97,8 +90,6 @@ var _parseResponse = exports._parseResponse = function (self, fnName, args, body
                 });
                 return true;
                 //change client
-                // self._changeNameNodeHost();
-                // return self[fnName].apply(self, args)
             }
             else {
                 callback(new RemoteException(body));
@@ -150,10 +141,8 @@ WebHDFSClient.prototype.del = function (path, hdfsoptions, requestoptions, callb
             'user.name': this.options.user
         }, hdfsoptions || {})
     }, requestoptions || {});
-
     // send http request
     request.del(args, parseResponse);
-
 };
 
 
@@ -184,10 +173,8 @@ WebHDFSClient.prototype.listStatus = function (path, hdfsoptions, requestoptions
             op: 'liststatus'
         }, hdfsoptions || {})
     }, requestoptions || {});
-
     // send http request
     request.get(args, parseResponse)
-
 };
 
 
@@ -218,10 +205,8 @@ WebHDFSClient.prototype.getFileStatus = function (path, hdfsoptions, requestopti
             op: 'getfilestatus'
         }, hdfsoptions || {})
     }, requestoptions || {});
-
     // send http request
     request.get(args, parseResponse);
-
 };
 
 
@@ -252,10 +237,8 @@ WebHDFSClient.prototype.getContentSummary = function (path, hdfsoptions, request
             op: 'getcontentsummary'
         }, hdfsoptions || {})
     }, requestoptions || {});
-
     // send http request
     request.get(args, parseResponse);
-
 };
 
 
@@ -286,7 +269,6 @@ WebHDFSClient.prototype.getFileChecksum = function (path, hdfsoptions, requestop
             op: 'getfilechecksum'
         }, hdfsoptions || {})
     }, requestoptions || {});
-
     // send http request
     request.get(args, parseResponse);
 };
@@ -320,10 +302,8 @@ WebHDFSClient.prototype.getHomeDirectory = function (hdfsoptions, requestoptions
             'user.name': this.options.user
         }, hdfsoptions || {})
     }, requestoptions || {});
-
     // send http request
     request.get(args, parseResponse);
-
 };
 
 // ref: http://hadoop.apache.org/common/docs/stable1/webhdfs.html#OPEN
@@ -352,10 +332,8 @@ WebHDFSClient.prototype.open = function (path, hdfsoptions, requestoptions, call
             op: 'open'
         }, hdfsoptions || {})
     }, requestoptions || {});
-
     // send http request
     return request.get(args, parseResponse);
-
 };
 
 
@@ -388,10 +366,8 @@ WebHDFSClient.prototype.rename = function (path, destination, hdfsoptions, reque
             'user.name': this.options.user
         }, hdfsoptions || {})
     }, requestoptions || {});
-
     // send http request
     request.put(args, parseResponse);
-
 };
 
 
@@ -423,10 +399,8 @@ WebHDFSClient.prototype.mkdirs = function (path, hdfsoptions, requestoptions, ca
             'user.name': this.options.user
         }, hdfsoptions || {})
     }, requestoptions || {});
-
     // send http request
     request.put(args, parseResponse);
-
 };
 
 
@@ -451,7 +425,6 @@ WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptio
 
     // format request args
     var args = _.defaults({
-
         json: true,
         followRedirect: false,
         uri: this.base_url + path,
@@ -459,12 +432,10 @@ WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptio
             op: 'append',
             'user.name': this.options.user
         }, hdfsoptions || {})
-
     }, requestoptions || {});
 
     // send http request
     request.post(args, function (error, response, body) {
-
        var handled = parseResponse(error, response, body);
        if (handled) {
            // callback already called
@@ -484,7 +455,6 @@ WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptio
 
             // send http request
             request.post(args, function (error, response, body) {
-
                 // forward request error
                 var handled = parseResponse(error, response, body);
                 if (handled) {
@@ -497,7 +467,6 @@ WebHDFSClient.prototype.append = function (path, data, hdfsoptions, requestoptio
                     return callback(new Error('expected http 200: ' + response ? response.body : response));
                 }
             });
-
         } else {
             return callback(new Error('expected redirect'));
         }
@@ -526,21 +495,17 @@ WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptio
 
     // generate query string
     var args = _.defaults({
-
         json: true,
         followRedirect: false,
         uri: this.base_url + path,
         qs: _.defaults({
-
             op: 'create',
             'user.name': this.options.user
-
         }, hdfsoptions || {})
     }, requestoptions || {});
 
     // send http request
     request.put(args, function (error, response, body) {
-
         // forward request error
         parseResponse(error, response, body);
         if (error) {
@@ -553,7 +518,6 @@ WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptio
         }
         // check for expected redirect
         else if (response.statusCode == 307) {
-
             // generate query string
             args = _.defaults({
                 body: data,
@@ -562,7 +526,6 @@ WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptio
 
             // send http request
             request.put(args, function (error, response, body) {
-
                 // forward request error
                 parseResponse(error, response, body);
                 if (error) {
@@ -576,11 +539,8 @@ WebHDFSClient.prototype.create = function (path, data, hdfsoptions, requestoptio
                     return callback(new Error('expected http 201 created'));
                 }
             });
-
         } else {
             return callback(new Error('expected redirect'));
         }
-
     });
-
 };

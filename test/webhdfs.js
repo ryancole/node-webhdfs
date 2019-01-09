@@ -16,7 +16,6 @@ const nock = require('nock');
 
 describe('WebHDFSClient', function () {
 
-    // never used for actual connection
     const oneNodeClient = new (require('..')).WebHDFSClient({
         namenode_host: endpoint1
     });
@@ -30,7 +29,7 @@ describe('WebHDFSClient', function () {
     // Set up a noop for testing puporses
     twoNodeClient._noop = function (callback) {
         if (callback) return callback();
-        // Adding this to tes the namenode switch inside the response parser
+        // Adding this to test the namenode switch inside the response parser
         return twoNodeClient._checkParsedResponse();
     };
 
@@ -268,7 +267,6 @@ describe('WebHDFSClient', function () {
         it('works properly', function (done) {
             const filePath = '/test/file';
             const newFilePath = '/new/test/file';
-            // const qs = `?op=rename&destination=${newFilePath}&user.name=webuser`;
             const namenodeRequest = nock(nodeOneBase)
                 .put('/webhdfs/v1/test/file?op=rename&destination=%2Fnew%2Ftest%2Ffile&user.name=webuser')
                 .reply(200, {boolean: true})
@@ -276,7 +274,6 @@ describe('WebHDFSClient', function () {
                 should.not.exist(err);
                 should(status).be.exactly(true)
                 return done()
-                //return
             })
         })
     })
@@ -291,7 +288,6 @@ describe('WebHDFSClient', function () {
                 should.not.exist(err);
                 should(response).be.exactly(true)
                 return done()
-                //return
             })
         })
     })
