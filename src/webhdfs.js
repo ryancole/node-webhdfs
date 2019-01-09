@@ -58,7 +58,7 @@ WebHDFSClient.prototype._changeNameNodeHost = function (callback) {
     // }
 };
 
-function _parseResponse(self, fnName, args, bodyArgs, callback, justCheckErrors){
+var _parseResponse = exports._parseResponse = function (self, fnName, args, bodyArgs, callback, justCheckErrors){
     // var changeNameNodeHost = self._changeNameNodeHost(self[fnName].apply(self, args));
     // forward request error
     return function(error, response, body) {
@@ -70,20 +70,22 @@ function _parseResponse(self, fnName, args, bodyArgs, callback, justCheckErrors)
                 if (self.options.high_availability){
                     //change client
                     self._changeNameNodeHost(function () {
-                        return self[fnName].apply(self, args)
+                        return self[fnName].apply(self, args);
                     });
                     return true;
                     // self._changeNameNodeHost(self[fnName].apply(self, args));
                     // return self[fnName].apply(self, args)
                 }
                 else {
-                    return callback(error);
+                    callback(error);
+                    return true;
                 }
             }
         }
 
         if (error) {
-            return callback(error);
+            callback(error);
+            return true;
         }
 
         // exception handling
@@ -91,7 +93,7 @@ function _parseResponse(self, fnName, args, bodyArgs, callback, justCheckErrors)
             if (self.options.high_availability && body.RemoteException.exception === 'StandbyException'){
                 //change client
                 self._changeNameNodeHost(function () {
-                    return self[fnName].apply(self, args)
+                    return self[fnName].apply(self, args);
                 });
                 return true;
                 //change client
@@ -99,7 +101,8 @@ function _parseResponse(self, fnName, args, bodyArgs, callback, justCheckErrors)
                 // return self[fnName].apply(self, args)
             }
             else {
-                return callback(new RemoteException(body));
+                callback(new RemoteException(body));
+                return true;
             }
         }
         // Reset Namenode switch toggle and backoff period if the operation is successful and the
@@ -113,7 +116,8 @@ function _parseResponse(self, fnName, args, bodyArgs, callback, justCheckErrors)
             return false;
         }
         // execute callback
-        return callback(null, _.get(body, bodyArgs, body));
+        callback(null, _.get(body, bodyArgs, body));
+        return true;
     }
 }
 
