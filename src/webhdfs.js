@@ -51,7 +51,7 @@ WebHDFSClient.prototype._changeNameNodeHost = function (callback) {
         this.options.namenode_host = list[index] ? list[index] : list[0];
         this._makeBaseUrl();
         return callback();
-    }, this.backoff_period_ms)
+    }, this._backoff_period_ms)
 };
 
 var _parseResponse = exports._parseResponse = function (self, fnName, args, bodyArgs, callback, justCheckErrors){
