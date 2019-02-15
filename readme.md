@@ -2,7 +2,7 @@ A WebHDFS module for Node.js
 
 ## Notice
 
-I no longer personally use HDFS and have no plans to continue development on this module myself. With that said, many of the more recent contributions to this module have not been from myself, and instead have been from open source contributors - thanks to you folks. If you would like me to add you as a maintainer of this repository then just open a pull request or somehow message me.
+I no longer use HDFS and have no plans to continue development on this module. With that said, many of the more recent patches to this module have not been from myself, and instead have been through open-source contributions. If you would like me to add you as a maintainer of this repository then just open a pull request or somehow message me and I will add you.
 
 # WebHDFS
 
